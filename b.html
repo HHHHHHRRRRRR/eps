@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>الرابط الخاص بك</title>
+    <title>الرابط الخاص بك-</title>
     <style>
         body {
             margin: 0;
@@ -17,9 +17,6 @@
             width: 100%;
             height: 100vh;
             border: none;
-            position: absolute;
-            top: 0;
-            left: 0;
         }
 
         .overlay {
@@ -39,7 +36,7 @@
             left: 50%;
             transform: translateX(-50%);
             background-color: #ffffff;
-            color: #333;
+            color: #333333;
             padding: 20px;
             border-radius: 10px 10px 0 0;
             box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.2);
@@ -48,8 +45,8 @@
             width: 400px;
             text-align: center;
             font-family: Arial, sans-serif;
-            display: none;
             animation: slideUp 0.5s ease-out forwards;
+            display: none;
         }
 
         .dismiss-btn {
@@ -69,8 +66,12 @@
         }
 
         @keyframes slideUp {
-            from { bottom: -100%; }
-            to { bottom: 0; }
+            from {
+                bottom: -100%;
+            }
+            to {
+                bottom: 0;
+            }
         }
 
         .download-btn {
@@ -81,7 +82,7 @@
             background-color: #007bff;
             color: white;
             border: none;
-            padding: 10px 15px;
+            padding: 0px 0px 0px 15px;
             border-radius: 8px;
             cursor: pointer;
             font-size: 14px;
@@ -92,27 +93,25 @@
             background-color: #0056b3;
         }
 
+        .download-btn img {
+            margin-left: 10px;
+            border-top-left-radius: 0px;
+            border-bottom-left-radius: 0px;
+            border-top-right-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
+
         .btn-icon {
             transform: scaleX(-1);
-            width: 16px;
-            height: 16px;
+            width: 16px !important;
+            height: 16px !important;
             margin-right: 9px;
         }
     </style>
-
     <script>
         function getQueryParam(name) {
             const urlParams = new URLSearchParams(window.location.search);
             return urlParams.get(name);
-        }
-
-        function isValidUrl(string) {
-            try {
-                new URL(string);
-                return true;
-            } catch (_) {
-                return false;
-            }
         }
 
         function showNotification() {
@@ -122,6 +121,7 @@
             setTimeout(() => {
                 overlay.style.display = 'block';
                 notification.style.display = 'block';
+                notification.classList.add('slide-up');
             }, 2000);
         }
 
@@ -131,33 +131,38 @@
         }
 
         function openNonRoxBrowser(iframeUrl) {
-            const intentUrl = 'intent://details?id=com.nonrox.browser&url=' + encodeURIComponent(iframeUrl) + '#Intent;scheme=market;package=com.android.vending;end';
+            var intentUrl = 'intent://details?id=com.nonrox.browser&url=' + encodeURIComponent(iframeUrl) + '#Intent;scheme=market;package=com.android.vending;end';
             window.location.href = intentUrl;
         }
 
-        document.addEventListener("DOMContentLoaded", () => {
+        document.addEventListener("DOMContentLoaded", function () {
             const iframeUrl = getQueryParam("url");
 
-            if (iframeUrl && isValidUrl(iframeUrl)) {
-                const iframe = document.createElement("iframe");
-                iframe.src = iframeUrl;
-                iframe.onload = showNotification;
-                document.body.appendChild(iframe);
+            if (iframeUrl && iframeUrl.startsWith("http")) {
+                document.getElementById("iframeContainer").innerHTML = `<iframe src="${iframeUrl}" onload="showNotification()"></iframe>`;
+                document.getElementById("openBrowserButton").setAttribute("onclick", `openNonRoxBrowser('${iframeUrl}')`);
             } else {
-                document.body.innerHTML = "<p>Invalid or missing URL parameter.</p>";
+                document.getElementById("iframeContainer").innerHTML = "<p>Invalid or missing URL parameter.</p>";
             }
         });
     </script>
 </head>
 <body>
+    <div id="iframeContainer"></div>
+
     <div class="overlay"></div>
+
     <div class="notification">
-        <button class="dismiss-btn" onclick="dismissNotification()">✖</button>
+        <button style="display:none;" class="dismiss-btn" onclick="dismissNotification()">✖</button>
         <h3 dir="rtl">
-            <strong>لمتابعة تصفح</strong> هذا الرابط
-            <br> تحتاج إلى <strong>استخدام متصفح nonRox</strong>
+            <strong>لمتابعة تصفح</strong>
+            هاذه الرابط
+            <br>
+            تحتاج الي 
+            <strong>استخدام متصفح nonRox</strong>
         </h3>
-        <button class="download-btn" onclick="openNonRoxBrowser(getQueryParam('url'))">
+
+        <button id="openBrowserButton" class="download-btn">
             <img src="https://cdn-icons-png.freepik.com/512/12319/12319778.png" class="btn-icon">
             <b>الأستمرار في التصفح</b>
             <img src="https://play-lh.googleusercontent.com/UDstMX7xZQ-rSyfQ3b8PCgvP2R4f-WBHBN9nUqrOY2aZLRxJ6RT4vsj5a245xGnAR2oj=w90-h90" alt="Download Icon">
