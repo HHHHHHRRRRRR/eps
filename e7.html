@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>الحلقة 7 من انمي سولو ليفلينج الموسم الثاني</title>
     <style>
+        /* General Styles */
         body {
             font-family: 'Poppins', sans-serif;
             text-align: center;
@@ -13,6 +14,7 @@
             background-color: #1e1e2e;
             color: #fff;
         }
+        
         .container {
             max-width: 900px;
             margin: auto;
@@ -22,6 +24,8 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             position: relative;
         }
+
+        /* Ambient Mode Background */
         .ambient-mode {
             position: absolute;
             top: 50%;
@@ -32,12 +36,27 @@
             transform: translate(-50%, -50%);
             z-index: -1;
         }
-        iframe, video {
+
+        /* Iframe Container (Hides Top 20%) */
+        .iframe-container {
+            position: relative;
             width: 100%;
-            border-radius: 8px;
-            margin-top: 20px;
+            padding-top: 56.25%; /* Aspect Ratio 16:9 */
+            overflow: hidden;
+            border-radius: 10px;
             box-shadow: 0 0 20px rgba(255, 69, 69, 0.5);
         }
+
+        .iframe-container iframe {
+            position: absolute;
+            top: -20%; /* Move iframe up to hide first 20% */
+            left: 0;
+            width: 100%;
+            height: 140%; /* Increase height so rest is visible */
+            border: none;
+        }
+
+        /* Download Button */
         .download-btn {
             display: inline-block;
             margin-top: 20px;
@@ -51,6 +70,7 @@
             text-decoration: none;
             transition: background 0.3s ease, transform 0.2s ease;
         }
+
         .download-btn:hover {
             background: linear-gradient(135deg, #ff4b2b, #ff416c);
             transform: scale(1.05);
@@ -62,8 +82,10 @@
         <div class="ambient-mode"></div>
         <h2>الحلقة 7 من انمي سولو ليفلينج الموسم الثاني</h2>
         
-        <!-- Embedded Video Player -->
-        <iframe width="640" height="360" frameborder="0" src="https://mega.nz/embed/iUYk0RTD#qQDhA9epZjkWsVfPMmJJt5-o0Zqh5qFd_0ig0PktZWE!1a1m" allowfullscreen allow="autoplay;"></iframe>
+        <!-- Video Embed with 20% Hidden -->
+        <div class="iframe-container">
+            <iframe src="https://mega.nz/embed/iUYk0RTD#qQDhA9epZjkWsVfPMmJJt5-o0Zqh5qFd_0ig0PktZWE!1a1m" allowfullscreen allow="autoplay;"></iframe>
+        </div>
 
         <br>
 
