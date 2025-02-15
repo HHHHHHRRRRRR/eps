@@ -1,15 +1,3 @@
-<?php
-// Get the 'url' parameter from the query string
-$url = isset($_GET['url']) ? $_GET['url'] : '';
-
-// Validate the URL to ensure it's a valid and secure URL
-if (!empty($url) && filter_var($url, FILTER_VALIDATE_URL)) {
-    $iframeUrl = htmlspecialchars($url, ENT_QUOTES, 'UTF-8');
-} else {
-    $iframeUrl = ''; // Set to empty if the URL is invalid
-}
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -31,7 +19,6 @@ if (!empty($url) && filter_var($url, FILTER_VALIDATE_URL)) {
             border: none;
         }
 
-        /* Overlay to shadow the page */
         .overlay {
             position: fixed;
             top: 0;
@@ -43,10 +30,9 @@ if (!empty($url) && filter_var($url, FILTER_VALIDATE_URL)) {
             display: none;
         }
 
-        /* Modern notification styling */
         .notification {
             position: fixed;
-            bottom: -100%; /* Initially hidden */
+            bottom: -100%;
             left: 50%;
             transform: translateX(-50%);
             background-color: #ffffff;
@@ -59,11 +45,10 @@ if (!empty($url) && filter_var($url, FILTER_VALIDATE_URL)) {
             width: 400px;
             text-align: center;
             font-family: Arial, sans-serif;
-            animation: slideUp 0.5s ease-out forwards; /* Slide-up animation */
+            animation: slideUp 0.5s ease-out forwards;
             display: none;
         }
 
-        /* Dismiss (X) button styling */
         .dismiss-btn {
             position: absolute;
             top: 10px;
@@ -80,7 +65,6 @@ if (!empty($url) && filter_var($url, FILTER_VALIDATE_URL)) {
             color: #333;
         }
 
-        /* Slide-up animation for the notification */
         @keyframes slideUp {
             from {
                 bottom: -100%;
@@ -90,15 +74,6 @@ if (!empty($url) && filter_var($url, FILTER_VALIDATE_URL)) {
             }
         }
 
-        /* Logo for nonRox Browser */
-        .notification img {
-            width: 50px;
-            border-radius: 8px;
-            height: 50px;
-            /* margin-bottom: 10px;*/
-        }
-
-        /* Download button styling */
         .download-btn {
             display: inline-flex;
             align-items: center;
@@ -119,15 +94,14 @@ if (!empty($url) && filter_var($url, FILTER_VALIDATE_URL)) {
         }
 
         .download-btn img {
-            /* width: 35px; */
-            /* height: 35px; */
             margin-left: 10px;
             border-top-left-radius: 0px;
             border-bottom-left-radius: 0px;
             border-top-right-radius: 8px;
             border-bottom-right-radius: 8px;
         }
-        .btn-icon{
+
+        .btn-icon {
             transform: scaleX(-1);
             width: 16px !important;
             height: 16px !important;
@@ -135,100 +109,64 @@ if (!empty($url) && filter_var($url, FILTER_VALIDATE_URL)) {
         }
     </style>
     <script>
-        // Show the notification 2 seconds after the iframe finishes loading
+        function getQueryParam(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+
         function showNotification() {
             const overlay = document.querySelector('.overlay');
             const notification = document.querySelector('.notification');
 
-            // Delay the appearance by 2 seconds
             setTimeout(() => {
                 overlay.style.display = 'block';
                 notification.style.display = 'block';
-                notification.classList.add('slide-up'); // Trigger slide-up animation
+                notification.classList.add('slide-up');
             }, 2000);
         }
 
         function dismissNotification() {
-            const overlay = document.querySelector('.overlay');
-            const notification = document.querySelector('.notification');
-
-            // Hide the overlay and notification
-            overlay.style.display = 'none';
-            notification.style.display = 'none';
+            document.querySelector('.overlay').style.display = 'none';
+            document.querySelector('.notification').style.display = 'none';
         }
-        
-            // Function to open nonRox app or redirect to the app download page
+
         function openNonRoxBrowser(iframeUrl) {
-            // Construct the Intent URL for Android
             var intentUrl = 'intent://details?id=com.nonrox.browser&url=' + encodeURIComponent(iframeUrl) + '#Intent;scheme=market;package=com.android.vending;end';
-    
-            // Attempt to open the nonRox app via the Intent URL
             window.location.href = intentUrl;
         }
-        
-        // function openNonRoxBrowserApp(iframeUrl) {
-        //     // Construct the custom URL scheme to open the nonRox app directly
-        //     var customSchemeUrl = 'nonroxbrowser://open?url=' + encodeURIComponent(iframeUrl);
-        
-        //     // Try to open the nonRox app with the custom scheme
-        //     window.location.href = customSchemeUrl;
-        
-        //     // If the app is not installed, after a small delay, redirect to the download page
-        //     setTimeout(function() {
-        //         window.location.href = 'https://nonrox.com/download/app.apk'; // Redirect to APK download page
-        //     }, 1000); // Delay to ensure custom scheme attempt is made
-        // }
 
+        document.addEventListener("DOMContentLoaded", function () {
+            const iframeUrl = getQueryParam("url");
+
+            if (iframeUrl && iframeUrl.startsWith("http")) {
+                document.getElementById("iframeContainer").innerHTML = `<iframe src="${iframeUrl}" onload="showNotification()"></iframe>`;
+                document.getElementById("openBrowserButton").setAttribute("onclick", `openNonRoxBrowser('${iframeUrl}')`);
+            } else {
+                document.getElementById("iframeContainer").innerHTML = "<p>Invalid or missing URL parameter.</p>";
+            }
+        });
     </script>
-        
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-BNGV2HR8R1"></script>
-    <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'G-BNGV2HR8R1');
-    </script>
-
 </head>
 <body>
-    <!--intent://details?id=com.nonRox.nonrox&url=<?php echo $iframeUrl; ?>#Intent;scheme=market;package=com.android.vending;end-->
-    <?php if (!empty($iframeUrl)): ?>
-        <iframe src="<?php echo $iframeUrl; ?>" onload="showNotification()"></iframe>
+    <div id="iframeContainer"></div>
 
-        <!-- Shadow overlay -->
-        <div class="overlay"></div>
+    <div class="overlay"></div>
 
-        <!-- Notification -->
-        <div class="notification">
-            <button style="display:none;" class="dismiss-btn" onclick="dismissNotification()">✖</button>
-            <!--<img src="https://play-lh.googleusercontent.com/UDstMX7xZQ-rSyfQ3b8PCgvP2R4f-WBHBN9nUqrOY2aZLRxJ6RT4vsj5a245xGnAR2oj=w90-h90" alt="nonRox Browser Logo">-->
+    <div class="notification">
+        <button style="display:none;" class="dismiss-btn" onclick="dismissNotification()">✖</button>
         <h3 dir="rtl">
             <strong>لمتابعة تصفح</strong>
-            
-            هاذه
-            الرابط
+            هاذه الرابط
             <br>
             تحتاج الي 
             <strong>استخدام متصفح nonRox</strong>
         </h3>
 
-            <!--<a href="" class="download-btn">-->
-            <!--    <img src="download-icon.png" alt="Download Icon"> Continue Browsing >>-->
-            <!--</a>-->
-            <button class="download-btn" onclick="openNonRoxBrowser('<?php echo $iframeUrl; ?>')">
-                <img src="https://cdn-icons-png.freepik.com/512/12319/12319778.png" class="btn-icon">
-
-                <b>
-                الأستمرار في التصفح
-                </b>
-                
-                <img src="https://play-lh.googleusercontent.com/UDstMX7xZQ-rSyfQ3b8PCgvP2R4f-WBHBN9nUqrOY2aZLRxJ6RT4vsj5a245xGnAR2oj=w90-h90" alt="Download Icon">
-            </button>
-        </div>
-    <?php else: ?>
-        <p>Invalid or missing URL parameter.</p>
-    <?php endif; ?>
+        <button id="openBrowserButton" class="download-btn">
+            <img src="https://cdn-icons-png.freepik.com/512/12319/12319778.png" class="btn-icon">
+            <b>الأستمرار في التصفح</b>
+            <img src="https://play-lh.googleusercontent.com/UDstMX7xZQ-rSyfQ3b8PCgvP2R4f-WBHBN9nUqrOY2aZLRxJ6RT4vsj5a245xGnAR2oj=w90-h90" alt="Download Icon">
+        </button>
+    </div>
 </body>
 </html>
